@@ -50,8 +50,14 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Gdxx.Authorization">
-      <Version>2021.419.1357-preview</Version>
+    <ProjectReference Include="..\Gdxx.Authorization\Gdxx.Authorization.csproj">
+      <Project>{877a7d33-ab1c-4928-9d64-390931b16f1b}</Project>
+      <Name>Gdxx.Authorization</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Gdxx.Authorization.Reference">
+      <Version>2021.916.1558</Version>
     </PackageReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

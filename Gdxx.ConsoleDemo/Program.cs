@@ -13,7 +13,7 @@ namespace Gdxx.ConsoleDemo
     {
         static void Main(string[] args)
         {
-            var address = "http://192.168.30.163:2021";
+            var address = " http://192.168.200.101:2021";
             var id = "C8859A21-85A5-9378-FDD9-B9942942D479";
             var version = "V1.0";
             var service = new AuthorizationService(address, id, version);
