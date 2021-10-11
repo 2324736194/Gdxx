@@ -55,10 +55,5 @@
       <Name>Gdxx.Authorization</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <PackageReference Include="Gdxx.Authorization.Reference">
-      <Version>2021.916.1558</Version>
-    </PackageReference>
-  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
