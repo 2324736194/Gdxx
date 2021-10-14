@@ -35,7 +35,7 @@ namespace Gdxx.Modbus
             {
                 throw new NotImplementedException("IP 地址不能为空");
             }
-                
+
             if (Port < 0)
             {
                 throw new NotImplementedException("无效的端口号");
@@ -51,7 +51,7 @@ namespace Gdxx.Modbus
             OnModbusConnectedChanged(new ModbusConnectedChangedEventArgs(client.Connected));
         }
 
-        public async void Lisenting(IReadOnlyList<ModbusData> list)
+        public async void Lisenting(IReadOnlyList<IModbusData> list)
         {
             if (null == list)
             {
@@ -85,47 +85,49 @@ namespace Gdxx.Modbus
             }
         }
 
-        private IReadOnlyDictionary<IModbusData, IReadOnlyDictionary<int, ValueType>> GetChangedDictionary(IReadOnlyList<ModbusData> list)
+        private IReadOnlyDictionary<IModbusData, IReadOnlyDictionary<int, ValueType>> GetChangedDictionary(IReadOnlyList<IModbusData> list)
         {
-            var result = new Dictionary<IModbusData, Dictionary<int, ValueType>>();
-            foreach (var item in list)
+            try
             {
-                if (!modbusDictionary.ContainsKey(item))
+                var result = new Dictionary<IModbusData, Dictionary<int, ValueType>>();
+                foreach (var item in list)
                 {
-                    modbusDictionary[item] = new Dictionary<int, ValueType>();
+                    if (!modbusDictionary.ContainsKey(item))
+                    {
+                        modbusDictionary[item] = new Dictionary<int, ValueType>();
+                    }
+
+                    var dictionary = modbusDictionary[item];
+                    var changedDictionary = result[item] = new Dictionary<int, ValueType>();
+                    switch (item.Code)
+                    {
+                        case ModbusCode.ReadCoilStatus:
+                            var coils = client.ReadCoils(item.Start, item.Quantity);
+                            ChangedHandler(coils.OfType<ValueType>().ToArray(), item, dictionary, changedDictionary);
+                            break;
+                        case ModbusCode.ReadInputStatus:
+                            var discreteInputs = client.ReadDiscreteInputs(item.Start, item.Quantity);
+                            ChangedHandler(discreteInputs.OfType<ValueType>().ToArray(), item, dictionary, changedDictionary);
+                            break;
+                        case ModbusCode.ReadHoldingRegister:
+                            var holdingRegisters = client.ReadHoldingRegisters(item.Start, item.Quantity);
+                            ChangedHandler(holdingRegisters.OfType<ValueType>().ToArray(), item, dictionary, changedDictionary);
+                            break;
+                        case ModbusCode.ReadInputRegister:
+                            var inputRegisters = client.ReadInputRegisters(item.Start, item.Quantity);
+                            ChangedHandler(inputRegisters.OfType<ValueType>().ToArray(), item, dictionary, changedDictionary);
+                            break;
+                        default:
+                            throw new ArgumentOutOfRangeException();
+                    }
                 }
 
-                var dictionary = modbusDictionary[item];
-                var changedDictionary = result[item] = new Dictionary<int, ValueType>();
-                switch (item.Code)
-                {
-                    case ModbusCode.ReadCoilStatus:
-                        var coils = client.ReadCoils(item.Start, item.Quantity);
-                        ChangedHandler(coils.OfType<ValueType>().ToArray(), item, dictionary, changedDictionary);
-                        break;
-                    case ModbusCode.ReadInputStatus:
-                        var discreteInputs = client.ReadDiscreteInputs(item.Start, item.Quantity);
-                        ChangedHandler(discreteInputs.OfType<ValueType>().ToArray(), item, dictionary, changedDictionary);
-                        break;
-                    case ModbusCode.ReadHoldingRegiste:
-                        var holdingRegisters = client.ReadHoldingRegisters(item.Start, item.Quantity);
-                        ChangedHandler(holdingRegisters.OfType<ValueType>().ToArray(), item, dictionary, changedDictionary);
-                        break;
-                    case ModbusCode.ReadInputRegiste:
-                        var inputRegisters = client.ReadInputRegisters(item.Start, item.Quantity);
-                        ChangedHandler(inputRegisters.OfType<ValueType>().ToArray(), item, dictionary, changedDictionary);
-                        break;
-                    case ModbusCode.WriteSingleCoil:
-                    case ModbusCode.WriteSingleRegister:
-                    case ModbusCode.WriteMultipleCoil:
-                    case ModbusCode.WriteMultipleRegister:
-                        continue;
-                    default:
-                        throw new ArgumentOutOfRangeException();
-                }
+                return result.ToDictionary(p => p.Key, p => (IReadOnlyDictionary<int, ValueType>) p.Value);
             }
-
-            return result.ToDictionary(p => p.Key, p => (IReadOnlyDictionary<int, ValueType>) p.Value);
+            catch (Exception ex)
+            {
+                throw new Exception("请检查 Modbus 服务器配置（连接地址或数据量长度）。", ex);
+            }
         }
 
         private void ChangedHandler(ValueType[] arrary, IModbusData data, Dictionary<int, ValueType> dictionary, Dictionary<int, ValueType> changedDictionary)
@@ -158,6 +160,26 @@ namespace Gdxx.Modbus
         private void OnModbusConnectedChanged(ModbusConnectedChangedEventArgs e)
         {
             ModbusConnectedChanged?.Invoke(this, e);
+        }
+
+        private void Check()
+        {
+            if (!client.Connected)
+            {
+                throw new Exception("请先连接 Modbus");
+            }
+        }
+
+        public void Write(int index, bool value)
+        {
+            Check();
+            client.WriteSingleCoil(index, value);
+        }
+
+        public void Write(int index, int value)
+        {
+            Check();
+            client.WriteSingleRegister(index, value);
         }
     }
 

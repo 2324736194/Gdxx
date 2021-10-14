@@ -42,6 +42,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="IModbusData.cs" />
+    <Compile Include="IModbusWrite.cs" />
     <Compile Include="ModbusCode.cs" />
     <Compile Include="ModbusData.cs" />
     <Compile Include="ModbusDataChangedEventArgs.cs" />

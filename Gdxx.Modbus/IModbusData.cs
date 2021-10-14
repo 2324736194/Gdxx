@@ -12,7 +12,7 @@ namespace Gdxx.Modbus
         int Start { get; }
             
         /// <summary>
-        /// 总长度
+        /// 数据量
         /// </summary>
         int Quantity { get; }
 

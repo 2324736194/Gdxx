@@ -1,0 +1,85 @@
+﻿<UserControl x:Class="ModbusDemo.Views.MainView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:ModbusDemo.Views"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    <UserControl.Resources>
+        <Thickness x:Key="Basics.Thickness.Left" Left="25"></Thickness>
+       <local:StringJoinConverter x:Key="StringJoinConverter"></local:StringJoinConverter>
+    </UserControl.Resources>
+    <DockPanel Margin="10">
+        <Border DockPanel.Dock="Top" Margin="10">
+            <StackPanel>
+                <DockPanel >
+                    <TextBlock Text="IP 地址："/>
+                    <TextBox Text="{Binding Path=IPAddress}" Width="125"></TextBox>
+                    <TextBlock Text="端口：" Margin="{StaticResource Basics.Thickness.Left}"/>
+                    <TextBox Text="{Binding Path=Port}" Width="125"></TextBox>
+                    <UniformGrid Rows="1">
+                        <Button 
+                            Command="{Binding Path=ConnectCommand}"
+                            Content="连接" Margin="{StaticResource Basics.Thickness.Left}"
+                            Style="{StaticResource Controls.Button.Theme}"></Button>
+                        <Button 
+                            Command="{Binding Path=LisentingCommand}"
+                            Content="监听" Margin="{StaticResource Basics.Thickness.Left}"
+                            Style="{StaticResource Controls.Button.Theme}"></Button>
+                        <Button 
+                            Command="{Binding Path=AddCommand}"
+                            Content="配置" Margin="{StaticResource Basics.Thickness.Left}"
+                            Style="{StaticResource Controls.Button.Theme}"></Button>
+                    </UniformGrid>
+                </DockPanel>
+            </StackPanel>
+        </Border>
+        <Border>
+            <DataGrid
+                ItemsSource="{Binding Path=DataCollection}"
+                ColumnWidth="*"
+                CanUserAddRows="False" CanUserDeleteRows="False" AutoGenerateColumns="False">
+                <DataGrid.Columns>
+                    <DataGridTextColumn 
+                        Binding="{Binding Path=Code}"
+                        IsReadOnly="True"
+                        Header="代码"></DataGridTextColumn>
+                    <DataGridTextColumn 
+                        Binding="{Binding Path=Code}"
+                        IsReadOnly="True"
+                        Header="起始地址"></DataGridTextColumn>
+                    <DataGridTextColumn 
+                        Binding="{Binding Path=Code}"
+                        IsReadOnly="True"
+                        Header="数据量"></DataGridTextColumn>
+                    <DataGridTemplateColumn
+                        Header="索引列表">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Path=IndexList,Converter={StaticResource StringJoinConverter}}" TextTrimming="CharacterEllipsis"/>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                    <DataGridTemplateColumn
+                        Header="操作">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                               <UniformGrid Rows="1">
+                                   <Button
+                                       CommandParameter="{Binding}"
+                                       Command="{Binding RelativeSource={RelativeSource AncestorType={x:Type DataGrid}},Path=DataContext.EditCommand}"
+                                       Content="编辑" Margin="5,2" Style="{StaticResource Controls.Button.Theme}"></Button>
+                                    <Button
+                                       CommandParameter="{Binding}"
+                                       Command="{Binding RelativeSource={RelativeSource AncestorType={x:Type DataGrid}},Path=DataContext.RemoveCommand}"
+                                       Content="移除"  Margin="5,2" Style="{StaticResource Controls.Button.Theme}"></Button>
+                               </UniformGrid>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                </DataGrid.Columns>
+            </DataGrid>
+        </Border>
+    </DockPanel>
+</UserControl>

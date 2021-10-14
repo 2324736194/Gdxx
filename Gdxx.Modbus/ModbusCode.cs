@@ -15,13 +15,16 @@
         /// <summary>
         /// 读取保持寄存器
         /// </summary>
-        ReadHoldingRegiste = 3,
+        ReadHoldingRegister = 3,
 
         /// <summary>
         /// 读取输入寄存器
         /// </summary>
-        ReadInputRegiste = 4,
+        ReadInputRegister = 4,
+    }
 
+    public enum ModbusWriteCode
+    {
         /// <summary>
         /// 写线圈状态
         /// </summary>

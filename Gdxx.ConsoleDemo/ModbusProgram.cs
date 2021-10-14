@@ -49,7 +49,7 @@ namespace Gdxx.ConsoleDemo
                 });
                 list.Add(new ModbusData()
                 {
-                    Code = ModbusCode.ReadHoldingRegiste,
+                    Code = ModbusCode.ReadHoldingRegister,
                     Start = 0,
                     Quantity = 50,
                     IndexList = new List<int>()
