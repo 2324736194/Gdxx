@@ -9,7 +9,7 @@
 	  <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Gdxx.Authorization.Reference" Version="2021.916.1558" />
+    <PackageReference Include="Gdxx.Authorization.Reference" Version="2021.1015.1517" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="5.0.1" />
     <PackageReference Include="Microsoft.Extensions.Http" Version="5.0.0" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
