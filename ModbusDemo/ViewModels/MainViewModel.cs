@@ -53,7 +53,7 @@ namespace ModbusDemo.ViewModels
 
         public ICommand RemoveCommand { get; }
         
-        public MainViewModel(IRegionManager manager)
+        public MainViewModel()
         {
             jsonPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Resources", "data.json");
             service = new ModbusService();
@@ -204,9 +204,9 @@ namespace ModbusDemo.ViewModels
             manager.RequestNavigate(MainWindow.ContentRegion, nameof(LisentingView));
             service.Lisenting(DataCollection.ToList());
         }
-        
+                
         private void Service_ModbusDataChanged(object sender, ModbusDataChangedEventArgs e)
-        {
+        {            
             var ioc = Application.Current.PrismIoc();
             var containerProvider = ioc.ContainerProvider;
             var aggregator = containerProvider.Resolve<IEventAggregator>();
@@ -232,6 +232,18 @@ namespace ModbusDemo.ViewModels
         public void Dispose()
         {
             jsonTimer.Stop();
+        }
+
+        public override void OnNavigatedTo(NavigationContext navigationContext)
+        {
+            base.OnNavigatedTo(navigationContext);
+            var form = navigationContext.NavigationService.Journal.CurrentEntry.Uri.ToString();
+            switch (form)
+            {
+                case nameof(Views.LisentingView):
+                    service.Lisented();
+                    break;
+            }
         }
     }
 }

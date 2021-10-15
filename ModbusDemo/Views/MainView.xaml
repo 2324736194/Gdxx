@@ -46,21 +46,13 @@
                         IsReadOnly="True"
                         Header="代码"></DataGridTextColumn>
                     <DataGridTextColumn 
-                        Binding="{Binding Path=Code}"
+                        Binding="{Binding Path=Start}"
                         IsReadOnly="True"
                         Header="起始地址"></DataGridTextColumn>
                     <DataGridTextColumn 
-                        Binding="{Binding Path=Code}"
+                        Binding="{Binding Path=Quantity}"
                         IsReadOnly="True"
-                        Header="数据量"></DataGridTextColumn>
-                    <DataGridTemplateColumn
-                        Header="索引列表">
-                        <DataGridTemplateColumn.CellTemplate>
-                            <DataTemplate>
-                                <TextBlock Text="{Binding Path=IndexList,Converter={StaticResource StringJoinConverter}}" TextTrimming="CharacterEllipsis"/>
-                            </DataTemplate>
-                        </DataGridTemplateColumn.CellTemplate>
-                    </DataGridTemplateColumn>
+                        Header="数据量"></DataGridTextColumn>                
                     <DataGridTemplateColumn
                         Header="操作">
                         <DataGridTemplateColumn.CellTemplate>
