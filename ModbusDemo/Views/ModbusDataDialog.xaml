@@ -5,7 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:ModbusDemo.Views"
              mc:Ignorable="d" 
-             Height="300" Width="400">
+             Width="400">
     <UserControl.Resources>
         <Thickness x:Key="Basics.Thickness.Bottom" Bottom="10"></Thickness>
         <Style TargetType="{x:Type Label}" BasedOn="{StaticResource Controls.Label.SharedWidth}"></Style>
@@ -26,37 +26,14 @@
             <DockPanel Margin="{StaticResource Basics.Thickness.Bottom}">
                 <Label Content="数据量："></Label>
                 <TextBox Text="{Binding Path=Quantity}"></TextBox>
-            </DockPanel>
-            <DockPanel Margin="{StaticResource Basics.Thickness.Bottom}">
-                <Label Content="索引列表："></Label>
-                <Button 
-                    CommandParameter="{Binding ElementName=ScrollViewer1}"
-                    Command="{Binding Path=AddCommand}"
-                    Content="新增"></Button>
-            </DockPanel>
+            </DockPanel>      
         </StackPanel>
         <Border DockPanel.Dock="Bottom">
             <Button 
                 Command="{Binding Path=OkCommand}"
                 Content="保存"></Button>
         </Border>
-        <Border Margin="{StaticResource Basics.Thickness.Bottom}">
-            <ScrollViewer x:Name="ScrollViewer1" Padding="20,0">
-                <ItemsControl ItemsSource="{Binding Path=IndexList}">
-                    <ItemsControl.ItemTemplate>
-                        <DataTemplate>
-                            <UniformGrid Rows="1" Margin="0,0,0,10">
-                                <TextBox Text="{Binding Path=Index}"></TextBox>
-                                <Button 
-                                    Margin="10,0,0,0"
-                                    CommandParameter="{Binding }"
-                                    Command="{Binding RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}},Path=RemoveCommand}"
-                                    Content="移除"></Button>
-                            </UniformGrid>
-                        </DataTemplate>
-                    </ItemsControl.ItemTemplate>
-                </ItemsControl>
-            </ScrollViewer>
+        <Border Margin="{StaticResource Basics.Thickness.Bottom}">    
         </Border>
     </DockPanel>
 </UserControl>

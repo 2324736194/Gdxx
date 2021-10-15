@@ -9,7 +9,7 @@ namespace Gdxx.Modbus
     public sealed class ModbusService
     {
         private readonly ModbusClient client;
-        private bool lisented;
+        private bool lisenting;
         private Dictionary<IModbusData, Dictionary<int, ValueType>> modbusDictionary;
 
         public string IPAddress { get; set; }
@@ -63,16 +63,16 @@ namespace Gdxx.Modbus
                 throw new Exception("请先连接 Modbus");
             }
 
-            if (lisented) return;
+            if (lisenting) return;
             try
             {
-                lisented = true;
+                lisenting = true;
                 if (null == modbusDictionary)
                 {
                     modbusDictionary = new Dictionary<IModbusData, Dictionary<int, ValueType>>();
                 }
 
-                while (client.Connected)
+                while (lisenting)
                 {
                     var changed = await Task.Run(() => GetChangedDictionary(list));
                     OnModbusDataChanged(new ModbusDataChangedEventArgs(changed));
@@ -81,8 +81,13 @@ namespace Gdxx.Modbus
             }
             finally
             {
-                lisented = false;
+                lisenting = false;
             }
+        }
+
+        public void Lisented()
+        {
+            lisenting = false;
         }
 
         private IReadOnlyDictionary<IModbusData, IReadOnlyDictionary<int, ValueType>> GetChangedDictionary(IReadOnlyList<IModbusData> list)
@@ -102,19 +107,19 @@ namespace Gdxx.Modbus
                     switch (item.Code)
                     {
                         case ModbusCode.ReadCoilStatus:
-                            var coils = client.ReadCoils(item.Start, item.Quantity);
+                            var coils = ReadHandler(item, (start, quantity) => client.ReadCoils(start, quantity));
                             ChangedHandler(coils.OfType<ValueType>().ToArray(), item, dictionary, changedDictionary);
                             break;
                         case ModbusCode.ReadInputStatus:
-                            var discreteInputs = client.ReadDiscreteInputs(item.Start, item.Quantity);
+                            var discreteInputs = ReadHandler(item, (start, quantity) => client.ReadDiscreteInputs(start, quantity));
                             ChangedHandler(discreteInputs.OfType<ValueType>().ToArray(), item, dictionary, changedDictionary);
                             break;
                         case ModbusCode.ReadHoldingRegister:
-                            var holdingRegisters = client.ReadHoldingRegisters(item.Start, item.Quantity);
+                            var holdingRegisters = ReadHandler(item, (start, quantity) => client.ReadHoldingRegisters(start, quantity));
                             ChangedHandler(holdingRegisters.OfType<ValueType>().ToArray(), item, dictionary, changedDictionary);
                             break;
                         case ModbusCode.ReadInputRegister:
-                            var inputRegisters = client.ReadInputRegisters(item.Start, item.Quantity);
+                            var inputRegisters = ReadHandler(item, (start, quantity) => client.ReadInputRegisters(start, quantity));
                             ChangedHandler(inputRegisters.OfType<ValueType>().ToArray(), item, dictionary, changedDictionary);
                             break;
                         default:
@@ -122,12 +127,36 @@ namespace Gdxx.Modbus
                     }
                 }
 
-                return result.ToDictionary(p => p.Key, p => (IReadOnlyDictionary<int, ValueType>) p.Value);
+                return result.ToDictionary(p => p.Key, p => (IReadOnlyDictionary<int, ValueType>)p.Value);
             }
             catch (Exception ex)
             {
                 throw new Exception("请检查 Modbus 服务器配置（连接地址或数据量长度）。", ex);
             }
+        }
+            
+        private List<T> ReadHandler<T>(IModbusData item, ModbusReadHandler<T> read)
+        {
+            var max = 100;
+            var length = item.Quantity / max;
+            if (item.Quantity % max > 0)
+            {
+                length++;
+            }
+            var list = new List<T>();
+            var index = item.Start;
+            for (var i = 0; i < length; i++)
+            {
+                var count = item.Quantity - i * max;              
+                if (count > max)
+                {
+                    count = max;
+                }
+                var result = read.Invoke(index, count);
+                list.AddRange(result);
+                index += 100;
+            }
+            return list;
         }
 
         private void ChangedHandler(ValueType[] arrary, IModbusData data, Dictionary<int, ValueType> dictionary, Dictionary<int, ValueType> changedDictionary)
@@ -182,6 +211,8 @@ namespace Gdxx.Modbus
             client.WriteSingleRegister(index, value);
         }
     }
+
+    public delegate IEnumerable<T> ModbusReadHandler<T>(int start, int quantity);
 
     public class ModbusConnectedChangedEventArgs : EventArgs
     {
