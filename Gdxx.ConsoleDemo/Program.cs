@@ -9,7 +9,7 @@ namespace Gdxx.ConsoleDemo
     {
         static void Main(string[] args)
         {
-            var program = new ModbusProgram();
+            var program = new AuthorizationProgram();
             program.Run().Wait();
             Console.ReadLine();
         }

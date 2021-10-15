@@ -7,15 +7,14 @@ namespace Gdxx.ConsoleDemo
 {
     class AuthorizationProgram
     {
-        public void Run()
+        public async Task Run()
         {
             var address = " http://192.168.200.101:2021";
             var id = "C8859A21-85A5-9378-FDD9-B9942942D479";
             var version = "V1.0";
             var service = new AuthorizationService(address, id, version);
-            Test1(service).Wait();
+            await Test1(service);
             Console.WriteLine("=====流程结束=====");
-            Console.ReadLine();
         }
 
         async Task Test1(AuthorizationService service)
