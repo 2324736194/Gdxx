@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Configuration;
 using System.Threading.Tasks;
 using GDCourse.LicenseService.Client;
 using GDCourse.LicenseService.Core;
@@ -13,6 +14,7 @@ namespace Gdxx.Authorization
         private readonly string id;
         private readonly string version;
         private readonly SoftType softType = SoftType.Normal;
+        private readonly int activationMode;
 
         /// <summary>
         /// 实例化授权码服务
@@ -25,6 +27,26 @@ namespace Gdxx.Authorization
             LicenseHelper.InitLicenseServer(address);
             this.id = id;
             this.version = version;
+            this.activationMode = GetActivationMode();
+        }
+
+        /// <summary>
+        /// 激活模式
+        /// <para>0：离线激活</para>
+        /// <para>1：在线激活</para>
+        /// </summary>
+        /// <returns></returns>
+        private int GetActivationMode()
+        {
+            var configuration = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
+            var settings = configuration.AppSettings.Settings;
+            var mode = settings["ActivationMode"].Value;
+            if (int.TryParse(mode, out var result))
+            {
+                return result;
+            }
+
+            return 1;
         }
 
         public AuthorizationInfo GetInfo()
@@ -50,7 +72,8 @@ namespace Gdxx.Authorization
             if (LicenseHelper.CheckRegistered())
             {
                 var licenseDescription = await LicenseHelper.ReadLicenseDescriptionAsync();
-                var result = await LicenseHelper.Check(licenseDescription, id, version, softType, userCode);
+                var onlineCheck = activationMode == 1 ? true : false;
+                var result = await LicenseHelper.Check(licenseDescription, id, version, softType, userCode, onlineCheck);
                 return result;
             }
             return default;

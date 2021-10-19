@@ -52,14 +52,15 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Gdxx.Authorization\Gdxx.Authorization.csproj">
-      <Project>{877a7d33-ab1c-4928-9d64-390931b16f1b}</Project>
-      <Name>Gdxx.Authorization</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Gdxx.Modbus\Gdxx.Modbus.csproj">
       <Project>{911522ce-ec54-4e10-9ab9-b17217ab8321}</Project>
       <Name>Gdxx.Modbus</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Gdxx.Authorization">
+      <Version>2021.1019.1104-preview</Version>
+    </PackageReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
