@@ -160,12 +160,6 @@
     </PackageReference>
     <PackageReference Include="Prism.DryIoc" Version="8.1.97" />
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Gdxx.Modbus\Gdxx.Modbus.csproj">
-      <Project>{911522ce-ec54-4e10-9ab9-b17217ab8321}</Project>
-      <Name>Gdxx.Modbus</Name>
-    </ProjectReference>
-  </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

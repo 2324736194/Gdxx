@@ -4,10 +4,10 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{2F16B04C-6FAD-406A-832C-15D5AD4D5C9B}</ProjectGuid>
+    <ProjectGuid>{26502714-5DA2-4187-8470-C76FBABAA750}</ProjectGuid>
     <OutputType>Exe</OutputType>
-    <RootNamespace>Gdxx.ConsoleDemo</RootNamespace>
-    <AssemblyName>Gdxx.ConsoleDemo</AssemblyName>
+    <RootNamespace>WebConsoleApp1</RootNamespace>
+    <AssemblyName>WebConsoleApp1</AssemblyName>
     <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
@@ -43,8 +43,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AuthorizationProgram.cs" />
-    <Compile Include="ModbusProgram.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -52,8 +50,8 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Gdxx.Authorization">
-      <Version>2021.1019.1104-preview</Version>
+    <PackageReference Include="Microsoft.Owin.Host.HttpListener">
+      <Version>4.2.0</Version>
     </PackageReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -1,8 +1,9 @@
-﻿using System.Collections.Generic;
-
-namespace Gdxx.Modbus
+﻿namespace Gdxx.Modbus
 {
-    public interface IModbusData
+    /// <summary>
+    /// Modbus 代码设置
+    /// </summary>
+    public interface IModbusCodeSet
     {
         /// <summary>
         /// 代码
@@ -13,7 +14,7 @@ namespace Gdxx.Modbus
         /// 起始地址
         /// </summary>
         int Start { get; }
-            
+
         /// <summary>
         /// 数据量
         /// </summary>

@@ -21,7 +21,7 @@ namespace ModbusDemo.ViewModels
 {
     public class MainViewModel : NavigationAwareViewModel,IDisposable
     {
-        private readonly ModbusService service;
+        private readonly ModbusSession service;
         private string iPAddress;
         private int port;
         private bool connected;
