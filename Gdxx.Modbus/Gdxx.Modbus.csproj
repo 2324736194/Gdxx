@@ -2,6 +2,12 @@
 
   <PropertyGroup>
     <TargetFramework>net462</TargetFramework>
+	  <Revision>$([System.DateTime]::Now.ToString("yyyy.MMdd.HHmm"))</Revision>
+	  <Version>$(Revision)-preview</Version>
+	  <RestoreProjectStyle>PackageReference</RestoreProjectStyle>
+	  <GenerateDocumentationFile>true</GenerateDocumentationFile>
+	  <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+	  <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
   </PropertyGroup>
 
   <ItemGroup>

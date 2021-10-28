@@ -16,11 +16,12 @@ namespace ModbusServiceDemo
             if (int.TryParse(read, out var port))
             {
                 var service = new ModbusService(port);
-                service.WriteHoldingRegisters(1, (float)111.222);
-                service.WriteHoldingRegisters(3, (float)333.444);
-                service.WriteHoldingRegisters(5, (float)555.666);
+                service.WriteHoldingRegisters(1, (float) 111.222);
+                service.WriteHoldingRegisters(3, (float) 333.444);
+                service.WriteHoldingRegisters(5, (float) 555.666);
                 service.Start();
             }
+
             Console.ReadKey();
         }
     }
