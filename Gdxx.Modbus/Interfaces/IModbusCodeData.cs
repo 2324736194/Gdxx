@@ -32,12 +32,4 @@
         /// </summary>
         int IsOffset { get; }
     }
-
-    public class ModbusCodeData : IModbusCodeData
-    {
-        public ModbusCode Code { get; set; }
-        public int DataAddress { get; set; }
-        public int DataIndex { get; set; }
-        public int IsOffset { get; set; }
-    }
 }

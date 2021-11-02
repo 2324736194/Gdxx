@@ -60,6 +60,18 @@ namespace Gdxx.Modbus
             holdingRegisters.SetValue(index, value);
         }
 
+        /// <summary>
+        /// 向 HoldingRegisters 写入 <see cref="bool"/>
+        /// <para>True：1</para>
+        /// <para>False：0</para>
+        /// </summary>
+        /// <param name="index"></param>
+        /// <param name="value"></param>
+        public void WriteHoldingRegisters(int index, bool value)
+        {
+            holdingRegisters[index] = (short) (value ? 1 : 0);
+        }
+
         /// <inheritdoc />
         public void Dispose()
         {

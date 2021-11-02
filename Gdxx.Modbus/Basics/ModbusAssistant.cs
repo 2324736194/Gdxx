@@ -5,6 +5,9 @@ using System.Text;
 
 namespace Gdxx.Modbus
 {
+    /// <summary>
+    /// Modbus 助手
+    /// </summary>
     internal class ModbusAssistant
     {
         /// <summary>
@@ -152,7 +155,6 @@ namespace Gdxx.Modbus
 
        private byte[] Ushorts2Bytes(ushort[] src, bool reverse = false)
         {
-
             int count = src.Length;
             byte[] dest = new byte[count << 1];
             if (reverse)
