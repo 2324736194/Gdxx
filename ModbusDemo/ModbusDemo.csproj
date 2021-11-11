@@ -56,26 +56,66 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Views\DialogWindow.xaml.cs">
+    <Compile Include="ViewModels\Modbus\ModbusCodeSetDialogViewModel.cs" />
+    <Compile Include="ViewModels\Modbus\ModbusDataItemViewModel.cs" />
+    <Compile Include="ViewModels\Modbus\ModbusDataListViewModel.cs" />
+    <Compile Include="ViewModels\Modbus\Write\ModbusDataWriteEventArgs.cs" />
+    <Compile Include="ViewModels\Modbus\Write\ReadCoilStatusWriteDialogViewModel.cs" />
+    <Compile Include="ViewModels\Modbus\Write\ReadHoldingRegisterWriteDialogViewModel.cs" />
+    <Compile Include="Views\Basics\DialogWindow.xaml.cs">
       <DependentUpon>DialogWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\ModbusDataDialog.xaml.cs">
+    <Compile Include="Views\ModbusSingleWriteDialog.xaml.cs">
+      <DependentUpon>ModbusSingleWriteDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Modbus\ModbusData\ModbusInt32View.xaml.cs">
+      <DependentUpon>ModbusInt32View.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Modbus\ModbusData\ModbusSingleView.xaml.cs">
+      <DependentUpon>ModbusSingleView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Modbus\ModbusDataListView.xaml.cs">
+      <DependentUpon>ModbusDataListView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Modbus\ModbusData\ModbusBooleanView.xaml.cs">
+      <DependentUpon>ModbusBooleanView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Modbus\ModbusCodeSetDialog.xaml.cs">
+      <DependentUpon>ModbusCodeSetDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Modbus\ModbusData\ModbusDataDialog.xaml.cs">
       <DependentUpon>ModbusDataDialog.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\ReadCoilStatusWriteDialog.xaml.cs">
+    <Compile Include="Views\Modbus\Write\ReadCoilStatusWriteDialog.xaml.cs">
       <DependentUpon>ReadCoilStatusWriteDialog.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\ReadHoldingRegisterWriteDialog.xaml.cs">
+    <Compile Include="Views\Modbus\Write\ReadHoldingRegisterWriteDialog.xaml.cs">
       <DependentUpon>ReadHoldingRegisterWriteDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\TestView.xaml.cs">
       <DependentUpon>TestView.xaml</DependentUpon>
     </Compile>
-    <Page Include="Views\DialogWindow.xaml">
+    <Page Include="Views\Basics\DialogWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\LisentingView.xaml">
+    <Page Include="Views\ModbusSingleWriteDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Modbus\ModbusData\ModbusInt32View.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Modbus\ModbusData\ModbusSingleView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Modbus\ModbusDataListView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Modbus\ModbusLisentingView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -92,14 +132,14 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="ViewModels\IndexViewModel.cs" />
-    <Compile Include="ViewModels\LisentingViewModel.cs" />
+    <Compile Include="ViewModels\Modbus\ModbusLisentingViewModel.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
     <Compile Include="ViewModels\MainWindowViewModel.cs" />
-    <Compile Include="ViewModels\ModbusDataDialogViewModel.cs" />
-    <Compile Include="ViewModels\ModbusSet.cs" />
+    <Compile Include="ViewModels\Modbus\ModbusDataDialogViewModel.cs" />
+    <Compile Include="ViewModels\Modbus\ModbusSet.cs" />
     <Compile Include="Views\Basics\StringJoinConverter.cs" />
-    <Compile Include="Views\LisentingView.xaml.cs">
-      <DependentUpon>LisentingView.xaml</DependentUpon>
+    <Compile Include="Views\Modbus\ModbusLisentingView.xaml.cs">
+      <DependentUpon>ModbusLisentingView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\MainView.xaml.cs">
       <DependentUpon>MainView.xaml</DependentUpon>
@@ -108,15 +148,23 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="Views\ModbusDataDialog.xaml">
+    <Page Include="Views\Modbus\ModbusData\ModbusBooleanView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\ReadCoilStatusWriteDialog.xaml">
+    <Page Include="Views\Modbus\ModbusCodeSetDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\ReadHoldingRegisterWriteDialog.xaml">
+    <Page Include="Views\Modbus\ModbusData\ModbusDataDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Modbus\Write\ReadCoilStatusWriteDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Modbus\Write\ReadHoldingRegisterWriteDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -147,9 +195,6 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
-    <None Include="Resources\data.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="iExt.PresentationFramework.Metro">
@@ -159,6 +204,12 @@
       <Version>2021.907.1102-preview</Version>
     </PackageReference>
     <PackageReference Include="Prism.DryIoc" Version="8.1.97" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Gdxx.Modbus\Gdxx.Modbus.csproj">
+      <Project>{7e946356-b621-4fb2-9b9d-3a7d7347f151}</Project>
+      <Name>Gdxx.Modbus</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

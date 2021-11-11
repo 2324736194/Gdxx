@@ -1,0 +1,32 @@
+﻿<UserControl x:Class="ModbusDemo.Views.ModbusSingleView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:ModbusDemo.Views"
+             xmlns:modbus="clr-namespace:Gdxx.Modbus;assembly=Gdxx.Modbus"
+             mc:Ignorable="d" 
+             d:DesignWidth="400">
+    <UserControl.Resources>
+        <Thickness x:Key="Basics.Thickness.Bottom" Bottom="10"></Thickness>
+        <Style TargetType="{x:Type Label}" BasedOn="{StaticResource Controls.Label.SharedWidth}"></Style>
+    </UserControl.Resources>
+    <StackPanel DockPanel.Dock="Top" Grid.IsSharedSizeScope="True">
+        <DockPanel Margin="{StaticResource Basics.Thickness.Bottom}">
+            <Label Content="数据地址："></Label>
+            <TextBox 
+                AttachedWatermark.Value="请输入地址"
+                Text="{Binding Path=DataAddress}"></TextBox>
+        </DockPanel>
+        <DockPanel Margin="{StaticResource Basics.Thickness.Bottom}">
+            <Label Content="数据格式："></Label>
+          <ComboBox
+              SelectedItem="{Binding Path=SingleFormat}">
+              <modbus:ModbusSingleFormat>ABCD</modbus:ModbusSingleFormat>
+              <modbus:ModbusSingleFormat>BADC</modbus:ModbusSingleFormat>
+              <modbus:ModbusSingleFormat>CDAB</modbus:ModbusSingleFormat>
+              <modbus:ModbusSingleFormat>DCBA</modbus:ModbusSingleFormat>
+            </ComboBox>
+        </DockPanel>
+    </StackPanel>
+</UserControl>

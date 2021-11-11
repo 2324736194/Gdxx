@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
@@ -19,17 +20,15 @@ using Prism.ViewModels;
 
 namespace ModbusDemo.ViewModels
 {
-    public class MainViewModel : NavigationAwareViewModel,IDisposable
+    public class MainViewModel : NavigationAwareViewModel
     {
-        private readonly ModbusSession service;
+        private readonly ModbusPoll poll;
         private string iPAddress;
         private int port;
-        private bool connected;
         private readonly string jsonPath;
-        private readonly DispatcherTimer jsonTimer;
-        private readonly ModbusSet set;
+        private readonly ModbusSet modbusSet;
 
-        public ObservableCollection<ModbusData> DataCollection { get; } 
+        public ObservableCollection<IModbusCodeSet> CodeCollection { get; }
 
         public int Port
         {
@@ -52,49 +51,90 @@ namespace ModbusDemo.ViewModels
         public ICommand EditCommand { get; }
 
         public ICommand RemoveCommand { get; }
-        
+
+        public ICommand SetCommand { get; }
+
         public MainViewModel()
         {
-            jsonPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Resources", "data.json");
-            service = new ModbusService();
-            service.ModbusDataChanged += Service_ModbusDataChanged;
-            set = GetModbusSet(jsonPath);
-            IPAddress = set.IPAddress;
-            Port = set.Port;
-            DataCollection = set.DataList.ToObservableCollection();
-            service.ModbusConnectedChanged += Service_ModbusConnectedChanged;
+            jsonPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "data.json");
+            modbusSet = GetModbusSet(jsonPath);
+            //
+            poll = new ModbusPoll();
+            poll.Connected += Poll_Connected;
+            poll.Disconnected += Poll_Disconnected;
+            //
+            IPAddress = modbusSet.IPAddress;
+            Port = modbusSet.Port;
+            CodeCollection = new ObservableCollection<IModbusCodeSet>();
+            //
+            foreach (var codeSet in modbusSet.CodeSetList)
+            {
+                var item = new ModbusCodeDictionary(codeSet);
+                modbusSet.BooleanList?.ForEach(p =>
+                {
+                    if (p.Code != item.Code) return;
+                    item.Add(p, null);
+                });
+                modbusSet.SingleList?.ForEach(p =>
+                {
+                    if (p.Code != item.Code) return;
+                    item.Add(p, null);
+                });
+                modbusSet.Int32List?.ForEach(p =>
+                {
+                    if (p.Code != item.Code) return;
+                    item.Add(p, null);
+                });
+                CodeCollection.Add(item);
+            }
+            //
             ConnectCommand = new DelegateCommand(ConnectCommandExecuteMethod);
             LisentingCommand = new DelegateCommand(LisentingCommandExecuteMethod);
             AddCommand = new DelegateCommand(AddCommandExecuteMethod);
-            EditCommand = new DelegateCommand<ModbusData>(EditCommandExecuteMethod);
-            RemoveCommand = new DelegateCommand<ModbusData>(RemoveCommandExecuteMethod);
-            // 最后启动
-            jsonTimer = new DispatcherTimer();
-            jsonTimer.Interval = TimeSpan.FromSeconds(3);
-            jsonTimer.Tick += JsonTimer_Tick;
-            jsonTimer.Start();
+            EditCommand = new DelegateCommand<IModbusCodeSet>(EditCommandExecuteMethod);
+            SetCommand = new DelegateCommand<IModbusCodeSet>(SetCommandExecuteMethod);
+            RemoveCommand = new DelegateCommand<IModbusCodeSet>(RemoveCommandExecuteMethod);
             // 订阅事件
             OnSubscribe();
+        }
+
+        private void SetCommandExecuteMethod(IModbusCodeSet codeSet)
+        {
+            var parameters = new NavigationParameters();
+            parameters.Add(nameof(IModbusCodeSet), codeSet);
+            var ioc = Application.Current.PrismIoc();
+            var manager = ioc.RegionManager;
+            manager.RequestNavigate(MainWindow.ContentRegion, nameof(ModbusDataListView), parameters);
+        }
+        
+        private void Poll_Disconnected(object sender, EventArgs e)
+        {
+            MessageBox.Show("已断开连接");
+        }
+
+        private void Poll_Connected(object sender, EventArgs e)
+        {
+            MessageBox.Show("连接成功");
         }
 
         private void OnSubscribe()
         {
             var ioc = Application.Current.PrismIoc();
             var aggregator = ioc.ContainerProvider.Resolve<IEventAggregator>();
-            aggregator.GetEvent<PubSubEvent<ModbusWriteEventArgs>>().Subscribe(Action);
+            aggregator.GetEvent<PubSubEvent<ModbusDataWriteEventArgs>>().Subscribe(Action);
         }
 
-        private void Action(ModbusWriteEventArgs args)
+        private void Action(ModbusDataWriteEventArgs args)
         {
-            if (service.IsConnected)
+            if (poll.IsConnected)
             {
                 switch (args.WriteCode)
                 {
                     case ModbusCode.ReadCoilStatus:
-                        service.Write(args.WriteIndex, (bool) args.WriteValue);
+                        //poll.Write(args.WriteIndex, (bool) args.WriteValue);
                         break;
                     case ModbusCode.ReadHoldingRegister:
-                        service.Write(args.WriteIndex, (int)args.WriteValue);
+                        //poll.Write(args.WriteIndex, (int)args.WriteValue);
                         break;
                     default:
                         throw new ArgumentOutOfRangeException();
@@ -102,39 +142,61 @@ namespace ModbusDemo.ViewModels
             }
         }
 
-        private void EditCommandExecuteMethod(ModbusData data)
+        private void EditCommandExecuteMethod(IModbusCodeSet codeSet)
         {
-            var codeCollection = DataCollection.Select(p => p.Code).ToList();
-            codeCollection.Remove(data.Code);
+            var codeCollection = CodeCollection.Select(p => p.Code).ToList();
+            codeCollection.Remove(codeSet.Code);
             var parameters = new DialogParameters();
-            parameters.Add(nameof(ModbusDataDialogViewModel), 1);
-            parameters.Add(nameof(ModbusDataDialogViewModel.CodeCollection), codeCollection);
-            parameters.Add(nameof(ModbusData), data);
+            parameters.Add(nameof(ModbusCodeSetDialogViewModel), 1);
+            parameters.Add(nameof(ModbusCodeSetDialogViewModel.CodeCollection), codeCollection);
+            parameters.Add(nameof(IModbusCodeSet), codeSet);
             var ioc = Application.Current.PrismIoc();
-            ioc.DialogService.ShowDialog(nameof(ModbusDataDialog), parameters, ModbusDataDialogCallback);
+            ioc.DialogService.ShowDialog(nameof(ModbusCodeSetDialog), parameters, ModbusCodeSetDialogCallback);
         }
 
-        private void RemoveCommandExecuteMethod(ModbusData data)
+        private void RemoveCommandExecuteMethod(IModbusCodeSet codeSet)
         {
-            var result = MessageBox.Show($"是否要移除 {data.Code} 配置？", "操作提示", MessageBoxButton.YesNo);
+            var result = MessageBox.Show($"是否要移除 {codeSet.Code} 配置？", "操作提示", MessageBoxButton.YesNo);
             if (result == MessageBoxResult.Yes)
             {
-                DataCollection.Remove(data);
+                CodeCollection.Remove(codeSet);
                 Save();
             }
         }
-
-        private void JsonTimer_Tick(object sender, EventArgs e)
-        {
-            Save();
-        }
-
+        
         private void Save()
         {
-            set.IPAddress = IPAddress;
-            set.Port = Port;
-            set.DataList = DataCollection.ToList();
-            var json = JsonConvert.SerializeObject(set);
+            modbusSet.IPAddress = IPAddress;
+            modbusSet.Port = Port;
+            modbusSet.CodeSetList = CodeCollection.Select(p => new CodeSet()
+            {
+                Code = p.Code,
+                Start = p.Start,
+                Quantity = p.Quantity
+            }).ToList();
+            modbusSet.BooleanList = new List<ModbusBoolean>();
+            modbusSet.SingleList = new List<ModbusSingle>();
+            modbusSet.Int32List = new List<ModbusInt32>();
+            foreach (var item in CodeCollection.OfType<ModbusCodeDictionary>())
+            {
+                foreach (var key in item.Keys)
+                {
+                    switch (key)
+                    {
+                        case ModbusBoolean boolean:
+                            modbusSet.BooleanList.Add(boolean);
+                            break;
+                        case ModbusSingle single:
+                            modbusSet.SingleList.Add(single);
+                            break;
+                        case ModbusInt32 int32:
+                            modbusSet.Int32List.Add(int32);
+                            break;
+                    }
+                }
+            }
+
+            var json = JsonConvert.SerializeObject(modbusSet);
             var buffer = System.Text.Encoding.UTF8.GetBytes(json);
             var file = File.Open(jsonPath, FileMode.Create);
             using (file)
@@ -154,96 +216,94 @@ namespace ModbusDemo.ViewModels
                     return JsonConvert.DeserializeObject<ModbusSet>(json);
                 }
             }
+
             return new ModbusSet();
         }
 
         private void AddCommandExecuteMethod()
         {
-            var codeCollection = DataCollection.Select(p => p.Code).ToList();
+            var codeCollection = CodeCollection.Select(p => p.Code).ToList();
             var parameters = new DialogParameters();
-            parameters.Add(nameof(ModbusDataDialogViewModel), 0);
-            parameters.Add(nameof(ModbusDataDialogViewModel.CodeCollection), codeCollection);
+            parameters.Add(nameof(ModbusCodeSetDialogViewModel), 0);
+            parameters.Add(nameof(ModbusCodeSetDialogViewModel.CodeCollection), codeCollection);
             var ioc = Application.Current.PrismIoc();
-            ioc.DialogService.ShowDialog(nameof(Views.ModbusDataDialog),parameters,ModbusDataDialogCallback);
+            ioc.DialogService.ShowDialog(nameof(ModbusCodeSetDialog), parameters, ModbusCodeSetDialogCallback);
         }
 
-        private void ModbusDataDialogCallback(IDialogResult dialogResult)   
+        private void ModbusCodeSetDialogCallback(IDialogResult dialogResult)
         {
             if (dialogResult.Result == ButtonResult.OK)
             {
-                var data = dialogResult.Parameters.GetValue<ModbusData>(nameof(ModbusData));
-                var item = DataCollection.FirstOrDefault(p => p.Code == data.Code);
-                if (null == item)
+                var set = dialogResult.Parameters.GetValue<IModbusCodeSet>(nameof(IModbusCodeSet));
+                switch (set)
                 {
-                    DataCollection.Add(data);
+                    // 新增
+                    case ModbusCodeSet codeSet:
+                        CodeCollection.Add(new ModbusCodeDictionary(codeSet));
+                        break;
+                    // 编辑
+                    case ModbusCodeDictionary codeDictionary:
+                        var index = CodeCollection.IndexOf(codeDictionary);
+                        CodeCollection[index] = codeDictionary;
+                        break;
                 }
-                else
-                {
-                    var index = DataCollection.IndexOf(item);
-                    DataCollection[index] = data;
-                }
+
                 Save();
             }
         }
 
         private void LisentingCommandExecuteMethod()
         {
-            if (!DataCollection.Any())
+            if (!CodeCollection.Any())
             {
                 MessageBox.Show("请配置监听的 Modbus 数据");
                 return;
             }
 
-            if (!service.IsConnected)
+            if (!poll.IsConnected)
             {
                 MessageBox.Show("请连接 Modbus");
                 return;
             }
+
             var ioc = Application.Current.PrismIoc();
+            var parameters = new NavigationParameters();
+            parameters.Add(nameof(IModbusDataLisenting), poll.Lisenting);
+            parameters.Add(nameof(CodeCollection), CodeCollection);
             var manager = ioc.RegionManager;
-            manager.RequestNavigate(MainWindow.ContentRegion, nameof(LisentingView));
-            service.Lisenting(DataCollection.ToList());
+            manager.RequestNavigate(MainWindow.ContentRegion, nameof(ModbusLisentingView), parameters);
         }
-                
-        private void Service_ModbusDataChanged(object sender, ModbusDataChangedEventArgs e)
-        {            
-            var ioc = Application.Current.PrismIoc();
-            var containerProvider = ioc.ContainerProvider;
-            var aggregator = containerProvider.Resolve<IEventAggregator>();
-            var pubSubEvent= aggregator.GetEvent<PubSubEvent<ModbusDataChangedEventArgs>>();
-            pubSubEvent.Publish(e);
-        }
-
-        private void Service_ModbusConnectedChanged(object sender, ModbusConnectedChangedEventArgs e)
-        {
-            connected = e.IsConnected;
-            MessageBox.Show(connected ? "连接成功" : "连接失败");
-        }
-
+        
         private void ConnectCommandExecuteMethod()
         {
-            if (connected) return;
-            connected = true;
-            service.IPAddress = IPAddress;
-            service.Port = Port;
-            service.Connect();
+            if (poll.IsConnected) return;
+            poll.IPAddress = IPAddress;
+            poll.Port = Port;
+            poll.Connect();
         }
-
-        public void Dispose()
-        {
-            jsonTimer.Stop();
-        }
-
+        
         public override void OnNavigatedTo(NavigationContext navigationContext)
         {
             base.OnNavigatedTo(navigationContext);
             var form = navigationContext.NavigationService.Journal.CurrentEntry.Uri.ToString();
             switch (form)
             {
-                case nameof(Views.LisentingView):
-                    service.Lisented();
+                case nameof(ModbusLisentingView):
+                    //poll.Lisented();
+                    break;
+                case nameof(ModbusDataListView):
+                    ModbusDataListViewHandler(navigationContext.NavigationService.Journal.CurrentEntry.Parameters);
                     break;
             }
+        }
+
+        private void ModbusDataListViewHandler(NavigationParameters parameters)
+        {
+            var codeDictionary = parameters.GetValue<ModbusCodeDictionary>(nameof(IModbusCodeSet));
+            var index = CodeCollection.IndexOf(codeDictionary);
+            CodeCollection.RemoveAt(index);
+            CodeCollection.Insert(index, codeDictionary);
+            Save();
         }
     }
 }

@@ -5,7 +5,8 @@
         xmlns:local="clr-namespace:ModbusDemo.Views"
         xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
         prism:ViewModelLocator.AutoWireViewModel="True"
-        Title="{Binding Title}" Height="600" Width="800">
+        Title="{Binding Title}" 
+        Height="600" Width="800" WindowStartupLocation="CenterScreen">
     <Grid>
         <ContentControl prism:RegionManager.RegionName="{x:Static local:MainWindow.ContentRegion}" >
             <b:Interaction.Triggers>

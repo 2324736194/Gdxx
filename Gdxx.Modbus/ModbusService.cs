@@ -57,7 +57,7 @@ namespace Gdxx.Modbus
         /// <param name="value"></param>
         public void WriteHoldingRegisters(int index, float value)
         {
-            holdingRegisters.SetValue(index, value);
+            //holdingRegisters.SetValue(index, value);
         }
 
         /// <summary>
@@ -71,6 +71,7 @@ namespace Gdxx.Modbus
         {
             holdingRegisters[index] = (short) (value ? 1 : 0);
         }
+
 
         /// <inheritdoc />
         public void Dispose()

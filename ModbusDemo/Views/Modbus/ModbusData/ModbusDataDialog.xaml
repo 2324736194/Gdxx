@@ -1,0 +1,55 @@
+﻿<UserControl x:Class="ModbusDemo.Views.ModbusDataDialog"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:ModbusDemo.Views"
+             xmlns:modbus="clr-namespace:Gdxx.Modbus;assembly=Gdxx.Modbus"
+             mc:Ignorable="d" 
+             Width="400">
+    <UserControl.Resources>
+        <Thickness x:Key="Basics.Thickness.Bottom" Bottom="10"></Thickness>
+        <Style TargetType="{x:Type Label}" BasedOn="{StaticResource Controls.Label.SharedWidth}"></Style>
+        <Style TargetType="{x:Type Button}" BasedOn="{StaticResource Controls.Button.Theme}"></Style>
+    </UserControl.Resources>
+    <DockPanel Margin="10">
+        <StackPanel DockPanel.Dock="Top" Grid.IsSharedSizeScope="True">
+            <DockPanel Margin="{StaticResource Basics.Thickness.Bottom}">
+                <Label Content="代码："></Label>
+                <TextBox Text="{Binding Path=Code}" IsReadOnly="True"></TextBox>
+            </DockPanel>
+            <DockPanel Margin="{StaticResource Basics.Thickness.Bottom}">
+                <Label Content="地址范围："></Label>
+                <UniformGrid Rows="1">
+                    <TextBox Text="{Binding Path=Start}" IsReadOnly="True"></TextBox>
+                    <TextBlock Text="~" HorizontalAlignment="Center" VerticalAlignment="Center"></TextBlock>
+                    <TextBox Text="{Binding Path=Quantity}" IsReadOnly="True"></TextBox>
+                </UniformGrid>
+            </DockPanel>
+            <DockPanel Margin="{StaticResource Basics.Thickness.Bottom}">
+                <Label Content="数据名称："></Label>
+                <TextBox Text="{Binding Path=Name}"></TextBox>
+            </DockPanel>
+            <ContentControl Content="{Binding Path=Data}">
+                <ContentControl.Resources>
+                    <DataTemplate DataType="{x:Type modbus:ModbusBoolean}">
+                        <local:ModbusBooleanView/>
+                    </DataTemplate>
+                    <DataTemplate DataType="{x:Type modbus:ModbusSingle}">
+                        <local:ModbusSingleView/>
+                    </DataTemplate>
+                    <DataTemplate DataType="{x:Type modbus:ModbusInt32}">
+                        <local:ModbusInt32View/>
+                    </DataTemplate>
+                </ContentControl.Resources>
+            </ContentControl>
+        </StackPanel>
+        <Border DockPanel.Dock="Bottom">
+            <Button 
+                Command="{Binding Path=OkCommand}"
+                Content="保存"></Button>
+        </Border>
+        <Border Margin="{StaticResource Basics.Thickness.Bottom}">
+        </Border>
+    </DockPanel>
+</UserControl>

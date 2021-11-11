@@ -1,0 +1,21 @@
+﻿<UserControl x:Class="ModbusDemo.Views.ModbusInt32View"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:ModbusDemo.Views"
+             mc:Ignorable="d" 
+             d:DesignWidth="400">
+    <UserControl.Resources>
+        <Thickness x:Key="Basics.Thickness.Bottom" Bottom="10"></Thickness>
+        <Style TargetType="{x:Type Label}" BasedOn="{StaticResource Controls.Label.SharedWidth}"></Style>
+    </UserControl.Resources>
+    <StackPanel DockPanel.Dock="Top" Grid.IsSharedSizeScope="True">
+        <DockPanel Margin="{StaticResource Basics.Thickness.Bottom}">
+            <Label Content="数据地址："></Label>
+            <TextBox 
+                AttachedWatermark.Value="请输入地址"
+                Text="{Binding Path=DataAddress}"></TextBox>
+        </DockPanel>
+    </StackPanel>
+</UserControl>

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -12,6 +13,7 @@ namespace ModbusServiceDemo
         static void Main(string[] args)
         {
             var port = default(int);
+
             while (true)
             {
                 Console.WriteLine("请输入端口号：");
@@ -24,6 +26,7 @@ namespace ModbusServiceDemo
                 Console.WriteLine("========================");
             }
             var service = new ModbusService(port);
+            service
             for (int i = 0; i < 3; i++)
             {
                 var index = 1 + i * 2;
