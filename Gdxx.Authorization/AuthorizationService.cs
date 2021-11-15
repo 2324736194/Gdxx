@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Configuration;
+using System.Linq;
 using System.Threading.Tasks;
 using GDCourse.LicenseService.Client;
 using GDCourse.LicenseService.Core;
@@ -40,10 +41,14 @@ namespace Gdxx.Authorization
         {
             var configuration = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
             var settings = configuration.AppSettings.Settings;
-            var mode = settings["ActivationMode"].Value;
-            if (int.TryParse(mode, out var result))
+            var key = "ActivationMode";
+            if (settings.AllKeys.Any(p => p == key))
             {
-                return result;
+                var mode = settings[key].Value;
+                if (int.TryParse(mode, out var result))
+                {
+                    return result;
+                }
             }
 
             return 1;
