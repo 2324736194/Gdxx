@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing.Imaging;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using EasyModbus;
 using EasyModbus.Exceptions;
@@ -228,47 +229,97 @@ namespace Gdxx.Modbus
         public void Write(IModbusDataWrite write)
         {
             Check();
-            var data = write.Data;
-            var value = write.Value;
-            switch (data.Code)
+            var code = write.Data.Code;
+            switch (code)
             {
                 case ModbusCode.ReadCoilStatus:
-                    if (value is bool b)
-                    {
-                        client.WriteSingleCoil(data.DataAddress, b);
-                    }
+                    WriteReadCoilStatus(write);
                     break;
                 case ModbusCode.ReadHoldingRegister:
-                    if (data is ModbusBoolean boolean)
-                    {
-                        Write(w)
-                        var registers = client.ReadHoldingRegisters(boolean.DataAddress, 1);
-                        var register = (short)registers.Single();
-                        RegisterAssistant.Changed(ref register, boolean, value);
-                        client.WriteSingleRegister(boolean.DataAddress, register);
-                    }
+                    WriteReadHoldingRegister(write);
                     break;
                 default:
-                    throw new ArgumentOutOfRangeException();
+                    throw new Exception($"代码 {code} 是只读的，不允许写入。");
             }
         }
 
-        private void Write(ModbusBoolean boolean, bool value)
+        private void WriteReadHoldingRegister(IModbusDataWrite write)
         {
-            switch (boolean.Code)
+            switch (write.Data)
             {
-                case ModbusCode.ReadCoilStatus:
-                    client.WriteSingleCoil(boolean.DataAddress, value);
-                    break;
-                case ModbusCode.ReadHoldingRegister:
-                    var registers = client.ReadHoldingRegisters(boolean.DataAddress, 1);
-                    var register = (short)registers.Single();
-                    RegisterAssistant.Changed(ref register, boolean, value);
-                    client.WriteSingleRegister(boolean.DataAddress, register);
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException();
+                case ModbusBoolean data:
+                {
+                    if (write.Value is bool value)
+                    {
+                        var registers = client.ReadHoldingRegisters(data.DataAddress, 1);
+                        var register = (short) registers.Single();
+                        RegisterAssistant.Changed(ref register, data, value);
+                        client.WriteSingleRegister(data.DataAddress, register);
+                        break;
+                    }
+                    
+                    throw new Exception(GetErrorMessage(data));
+                }
+
+                case ModbusSingle data:
+                {
+                    if (write.Value is float value)
+                    {
+                        var registers = client.ReadHoldingRegisters(data.DataAddress, 2);
+                        RegisterAssistant.Changed(ref registers, data, value);
+                        client.WriteMultipleRegisters(data.DataAddress, registers);
+                        break;
+                    }
+
+                    throw new Exception(GetErrorMessage(data));
+                }
+
+                case ModbusInt32 data:
+                {
+                    if (write.Value is int value)
+                    {
+                        client.WriteSingleRegister(data.DataAddress, value);
+                        break;
+                    }
+
+                    throw new Exception(GetErrorMessage(data));
+                }
             }
+        }
+
+        private string GetErrorMessage(IModbusData data)
+        {
+            var dataType = string.Empty;
+            switch (data)
+            {
+                case ModbusSingle data1:
+                    dataType = nameof(Single);
+                    break;
+                case ModbusInt32 data1:
+                    dataType = nameof(Int32);
+                    break;
+                case ModbusBoolean data1:
+                    dataType = nameof(Boolean);
+                    break;
+            }
+
+            var builder = new StringBuilder();
+            builder.AppendFormat("代码 {0} 中数据地址 {1} 只能写入 {2} 类型的数据", data.Code, data.DataAddress, dataType);
+            return builder.ToString();
+        }
+
+        private void WriteReadCoilStatus(IModbusDataWrite write)
+        {
+            var data = write.Data;
+            if (write.Value is bool value)
+            {
+                client.WriteSingleCoil(data.DataAddress, value);
+                return;
+            }
+
+            var builder = new StringBuilder();
+            builder.AppendFormat("代码 {0} 仅允许写入 {1} 类型的数据", ModbusCode.ReadCoilStatus, nameof(Boolean));
+            throw new Exception(builder.ToString());
         }
     }
 }

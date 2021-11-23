@@ -5,8 +5,14 @@ namespace ModbusDemo.ViewModels
 {
     public class ModbusDataWriteEventArgs : EventArgs, IModbusDataWrite
     {
-        public IModbusData Data { get; set; }
+        public IModbusData Data { get; }
 
-        public object Value { get; set; }
+        public object Value { get; }
+
+        public ModbusDataWriteEventArgs(IModbusData data, object value)
+        {
+            Data = data;
+            Value = value;
+        }
     }
 }

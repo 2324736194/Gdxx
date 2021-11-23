@@ -16,12 +16,12 @@ namespace Gdxx.Modbus
         /// <summary>
         /// 起始地址
         /// </summary>
-        public int Start { get; }
+        public int Start { get; set; }
 
         /// <summary>
         /// 数据量
         /// </summary>
-        public int Quantity { get; }
+        public int Quantity { get; set; }
 
         /// <summary>
         /// 

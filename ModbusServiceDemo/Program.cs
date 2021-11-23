@@ -25,8 +25,7 @@ namespace ModbusServiceDemo
                 Console.WriteLine("ERROR：请输入有效的端口号");
                 Console.WriteLine("========================");
             }
-            var service = new ModbusService(port);
-            service
+            var service = new ModbusSlave(port);
             for (int i = 0; i < 3; i++)
             {
                 var index = 1 + i * 2;

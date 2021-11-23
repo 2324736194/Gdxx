@@ -16,11 +16,11 @@ using System.Windows.Shapes;
 namespace ModbusDemo.Views
 {
     /// <summary>
-    /// ReadHoldingRegisterWriteDialog.xaml 的交互逻辑
+    /// ModbusInt32WriteDialog.xaml 的交互逻辑
     /// </summary>
-    public partial class ReadHoldingRegisterWriteDialog : UserControl
+    public partial class ModbusInt32WriteDialog : UserControl
     {
-        public ReadHoldingRegisterWriteDialog()
+        public ModbusInt32WriteDialog()
         {
             InitializeComponent();
         }

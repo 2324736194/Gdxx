@@ -34,9 +34,23 @@
                                 <DataGridTextColumn 
                                     Binding="{Binding Path=Data.Name}" 
                                     Header="数据名称" IsReadOnly="True"/>
-                                <DataGridTextColumn 
-                                    Binding="{Binding Path=Data.DataAddress}" 
-                                    Header="数据地址" IsReadOnly="True"/>
+                                <DataGridTemplateColumn 
+                                    Header="数据地址" IsReadOnly="True">
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <DockPanel>
+                                                <TextBlock Text="{Binding Path=Data.DataAddress}"></TextBlock>
+                                                <TextBlock Text="."></TextBlock>
+                                                <TextBlock x:Name="IndexBlock" Text="0"></TextBlock>
+                                            </DockPanel>
+                                            <DataTemplate.Triggers>
+                                                <DataTrigger Binding="{Binding Path=Data.IsEnabledSplit}" Value="True">
+                                                    <Setter TargetName="IndexBlock" Property="Text" Value="{Binding Path=Data.Index}"></Setter>
+                                                </DataTrigger>
+                                            </DataTemplate.Triggers>
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                </DataGridTemplateColumn>
                                 <DataGridTemplateColumn Header="值">
                                     <DataGridTemplateColumn.CellTemplate>
                                         <DataTemplate>

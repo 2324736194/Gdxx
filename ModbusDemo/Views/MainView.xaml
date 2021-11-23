@@ -58,14 +58,14 @@
                         IsReadOnly="True" 
                         Header="已配置数据总数"></DataGridTextColumn>
                     <DataGridTemplateColumn
-                        Header="操作" Width="200">
+                        Header="操作" Width="250">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
                                 <UniformGrid Rows="1">
-                                    <!--<Button
-                                       CommandParameter="{Binding}" Visibility="Collapsed"
+                                    <Button
+                                       CommandParameter="{Binding}"
                                        Command="{Binding RelativeSource={RelativeSource AncestorType={x:Type DataGrid}},Path=DataContext.EditCommand}"
-                                       Content="编辑" Margin="5,2" Style="{StaticResource Controls.Button.Theme}"></Button>-->
+                                       Content="编辑" Margin="5,2" Style="{StaticResource Controls.Button.Theme}"></Button>
                                     <Button
                                        CommandParameter="{Binding}"
                                        Command="{Binding RelativeSource={RelativeSource AncestorType={x:Type DataGrid}},Path=DataContext.RemoveCommand}"

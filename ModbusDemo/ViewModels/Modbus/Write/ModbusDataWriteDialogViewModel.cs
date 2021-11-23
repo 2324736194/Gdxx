@@ -10,26 +10,27 @@ using Prism.ViewModels;
 
 namespace ModbusDemo.ViewModels
 {
-    public class ReadHoldingRegisterWriteDialogViewModel : DialogAwareViewModel
+    public abstract class ModbusDataWriteDialogViewModel<TModbusData, TValue> : DialogAwareViewModel
+        where TModbusData : IModbusData
     {
-        private int writeValue;
-        private int index;
+        private TModbusData data;
+        private TValue value;
 
-        public int Index
+        public TValue Value
         {
-            get => index;
-            set => this.SetValue(ref index, value);
+            get => value;
+            set => this.SetValue(ref this.value, value);
         }
 
-        public int WriteValue
+        public TModbusData Data
         {
-            get => writeValue;
-            set => this.SetValue(ref writeValue, value);
+            get => data;
+            set => this.SetValue(ref data, value);
         }
 
         public ICommand WriteCommand { get; }
 
-        public ReadHoldingRegisterWriteDialogViewModel()
+        protected ModbusDataWriteDialogViewModel()
         {
             WriteCommand = new DelegateCommand(WriteCommandExecuteMethod);
         }
@@ -39,17 +40,16 @@ namespace ModbusDemo.ViewModels
             var ioc = Application.Current.PrismIoc();
             var aggregator = ioc.ContainerProvider.Resolve<IEventAggregator>();
             var pubSubEvent = aggregator.GetEvent<PubSubEvent<ModbusDataWriteEventArgs>>();
-            pubSubEvent.Publish(new ModbusDataWriteEventArgs(ModbusCode.ReadHoldingRegister, Index, writeValue));
+            pubSubEvent.Publish(new ModbusDataWriteEventArgs(Data, Value));
             OnRequestClose(new DialogResult(ButtonResult.OK));
         }
 
         public override void OnDialogOpened(IDialogParameters parameters)
         {
             base.OnDialogOpened(parameters);
-            var item = parameters.GetValue<ModbusDataItemViewModel>(nameof(ModbusDataItemViewModel));
-            //Title = item.Code.ToString();
-            //Index = item.Index;
-            //WriteValue = (int)item.ItemValue;
+            Title = "Modbus 数据写入";
+            Data = parameters.GetValue<TModbusData>(nameof(IModbusData));
+            Value = parameters.GetValue<TValue>(nameof(Value));
         }
     }
 }

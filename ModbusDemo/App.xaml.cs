@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using ModbusDemo.Views;
 using Prism.Ioc;
 using Prism.Modularity;
@@ -26,8 +27,9 @@ namespace ModbusDemo
         {
             base.OnStartup(e);
             DispatcherUnhandledException += App_DispatcherUnhandledException;
-            var f = 0.25f;
-            var bytes = BitConverter.GetBytes(f);
+            var s = 2;
+            var result =  Convert.ToString(s, 2).PadLeft(16, '0');
+            var result1 = Convert.ToInt16(result, 2);
         }
 
         private void App_DispatcherUnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)

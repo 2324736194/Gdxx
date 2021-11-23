@@ -6,7 +6,7 @@ namespace Gdxx.Modbus
     /// <summary>
     /// Modbus 从站服务
     /// </summary>
-    public sealed class ModbusService : IDisposable
+    public sealed class ModbusSlave : IDisposable
     {
         private readonly ModbusServer server;
         private readonly ModbusServer.HoldingRegisters holdingRegisters;
@@ -20,7 +20,7 @@ namespace Gdxx.Modbus
         /// 构造 Modbus 从站服务
         /// </summary>
         /// <param name="port">端口号，默认 502。</param>
-        public ModbusService(int port = 502)
+        public ModbusSlave(int port = 502)
         {
             server = new ModbusServer();
             server.Port = port;
@@ -55,9 +55,15 @@ namespace Gdxx.Modbus
         /// </summary>
         /// <param name="index">数据索引，索引从 1 开始</param>
         /// <param name="value"></param>
-        public void WriteHoldingRegisters(int index, float value)
+        /// <param name="format"></param>
+        public void WriteHoldingRegisters(int index, float value,ModbusSingleFormat format = ModbusSingleFormat.ABCD)
         {
-            //holdingRegisters.SetValue(index, value);
+            var registers = new short[2];
+            registers[0] = holdingRegisters[index];
+            registers[1] = holdingRegisters[index + 1];
+            RegisterAssistant.Changed(ref registers, format, value);
+            holdingRegisters[index] = registers[0];
+            holdingRegisters[index + 1] = registers[1];
         }
 
         /// <summary>
@@ -71,8 +77,7 @@ namespace Gdxx.Modbus
         {
             holdingRegisters[index] = (short) (value ? 1 : 0);
         }
-
-
+        
         /// <inheritdoc />
         public void Dispose()
         {

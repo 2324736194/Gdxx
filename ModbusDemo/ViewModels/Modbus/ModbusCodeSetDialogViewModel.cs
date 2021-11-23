@@ -17,6 +17,7 @@ namespace ModbusDemo.ViewModels
         private int start;
         private int quantity;
         private ModbusCode selectedCode;
+        private IModbusCodeSet codeSet;
 
         public ModbusCode SelectedCode
         {
@@ -55,13 +56,22 @@ namespace ModbusDemo.ViewModels
             {
                 return;
             }
-
-            var codeSet = new ModbusCodeSet()
+            
+            switch (codeSet)
             {
-                Code = SelectedCode,
-                Start = Start,
-                Quantity = Quantity,
-            };
+                case null:
+                    codeSet = new ModbusCodeSet()
+                    {
+                        Code = SelectedCode,
+                        Start = Start,
+                        Quantity = Quantity,
+                    };
+                    break;
+                case ModbusCodeDictionary dictionary:
+                    dictionary.Start = Start;
+                    dictionary.Quantity = Quantity;
+                    break;
+            }
             var parameters = new DialogParameters();
             parameters.Add(nameof(IModbusCodeSet), codeSet);
             OnRequestClose(new DialogResult(ButtonResult.OK, parameters));
@@ -77,37 +87,38 @@ namespace ModbusDemo.ViewModels
                 this.RaiseErrorsChanged(p => p.Quantity, error);
                 result = false;
             }
+
             if (Start < 0)
             {
                 error = "起始地址必须大于或等于 0";
                 this.RaiseErrorsChanged(p => p.Start, error);
                 result = false;
             }
+
             return result;
         }
 
         public override void OnDialogOpened(IDialogParameters parameters)
         {
             base.OnDialogOpened(parameters);
-            CodeCollection = Enum.GetValues(typeof(ModbusCode)).OfType<ModbusCode>().ToObservableCollection();
             var index = parameters.GetValue<int>(GetType().Name);
             var codes = parameters.GetValue<List<ModbusCode>>(nameof(CodeCollection));
-            if (null != codes)
-            {
-                foreach (var code in codes)
-                {
-                    CodeCollection.Remove(code);
-                }
-            }
             switch (index)
             {
                 // 新增
                 case 0:
+                    codeSet = default;
+                    CodeCollection = codes.ToObservableCollection();
                     SelectedCode = CodeCollection.First();
                     break;
                 // 编辑
                 case 1:
-                    var codeSet = parameters.GetValue<IModbusCodeSet>(nameof(IModbusCodeSet));
+                    codeSet = parameters.GetValue<IModbusCodeSet>(nameof(IModbusCodeSet));
+                    codes = new List<ModbusCode>()
+                    {
+                        codeSet.Code
+                    };
+                    CodeCollection = codes.ToObservableCollection();
                     SelectedCode = codeSet.Code;
                     Start = codeSet.Start;
                     Quantity = codeSet.Quantity;

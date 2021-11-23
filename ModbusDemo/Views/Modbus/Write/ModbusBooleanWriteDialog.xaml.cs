@@ -16,11 +16,11 @@ using System.Windows.Shapes;
 namespace ModbusDemo.Views
 {
     /// <summary>
-    /// ReadCoilStatusWriteDialog.xaml 的交互逻辑
+    /// ModbusBooleanWriteDialog.xaml 的交互逻辑
     /// </summary>
-    public partial class ReadCoilStatusWriteDialog : UserControl
+    public partial class ModbusBooleanWriteDialog : UserControl
     {
-        public ReadCoilStatusWriteDialog()
+        public ModbusBooleanWriteDialog()
         {
             InitializeComponent();
         }

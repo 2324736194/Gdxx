@@ -128,27 +128,14 @@ namespace ModbusDemo.ViewModels
         {
             if (poll.IsConnected)
             {
-                switch (args.WriteCode)
-                {
-                    case ModbusCode.ReadCoilStatus:
-                        //poll.Write(args.WriteIndex, (bool) args.WriteValue);
-                        break;
-                    case ModbusCode.ReadHoldingRegister:
-                        //poll.Write(args.WriteIndex, (int)args.WriteValue);
-                        break;
-                    default:
-                        throw new ArgumentOutOfRangeException();
-                }
+                poll.Write(args);
             }
         }
 
         private void EditCommandExecuteMethod(IModbusCodeSet codeSet)
         {
-            var codeCollection = CodeCollection.Select(p => p.Code).ToList();
-            codeCollection.Remove(codeSet.Code);
             var parameters = new DialogParameters();
             parameters.Add(nameof(ModbusCodeSetDialogViewModel), 1);
-            parameters.Add(nameof(ModbusCodeSetDialogViewModel.CodeCollection), codeCollection);
             parameters.Add(nameof(IModbusCodeSet), codeSet);
             var ioc = Application.Current.PrismIoc();
             ioc.DialogService.ShowDialog(nameof(ModbusCodeSetDialog), parameters, ModbusCodeSetDialogCallback);
@@ -244,7 +231,8 @@ namespace ModbusDemo.ViewModels
                     // 编辑
                     case ModbusCodeDictionary codeDictionary:
                         var index = CodeCollection.IndexOf(codeDictionary);
-                        CodeCollection[index] = codeDictionary;
+                        CodeCollection.RemoveAt(index);
+                        CodeCollection.Insert(index, codeDictionary);
                         break;
                 }
 

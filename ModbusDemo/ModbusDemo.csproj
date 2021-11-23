@@ -59,13 +59,21 @@
     <Compile Include="ViewModels\Modbus\ModbusCodeSetDialogViewModel.cs" />
     <Compile Include="ViewModels\Modbus\ModbusDataItemViewModel.cs" />
     <Compile Include="ViewModels\Modbus\ModbusDataListViewModel.cs" />
+    <Compile Include="ViewModels\Modbus\Write\ModbusBooleanWriteDialogViewModel.cs" />
+    <Compile Include="ViewModels\Modbus\Write\ModbusDataWriteDialogViewModel.cs" />
+    <Compile Include="ViewModels\Modbus\Write\ModbusInt32WriteDialogViewModel.cs" />
+    <Compile Include="ViewModels\Modbus\Write\ModbusSingleWriteDialogViewModel.cs" />
     <Compile Include="ViewModels\Modbus\Write\ModbusDataWriteEventArgs.cs" />
-    <Compile Include="ViewModels\Modbus\Write\ReadCoilStatusWriteDialogViewModel.cs" />
-    <Compile Include="ViewModels\Modbus\Write\ReadHoldingRegisterWriteDialogViewModel.cs" />
     <Compile Include="Views\Basics\DialogWindow.xaml.cs">
       <DependentUpon>DialogWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\ModbusSingleWriteDialog.xaml.cs">
+    <Compile Include="Views\Modbus\Write\ModbusBooleanWriteDialog.xaml.cs">
+      <DependentUpon>ModbusBooleanWriteDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Modbus\Write\ModbusInt32WriteDialog.xaml.cs">
+      <DependentUpon>ModbusInt32WriteDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Modbus\Write\ModbusSingleWriteDialog.xaml.cs">
       <DependentUpon>ModbusSingleWriteDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Modbus\ModbusData\ModbusInt32View.xaml.cs">
@@ -86,12 +94,6 @@
     <Compile Include="Views\Modbus\ModbusData\ModbusDataDialog.xaml.cs">
       <DependentUpon>ModbusDataDialog.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Modbus\Write\ReadCoilStatusWriteDialog.xaml.cs">
-      <DependentUpon>ReadCoilStatusWriteDialog.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\Modbus\Write\ReadHoldingRegisterWriteDialog.xaml.cs">
-      <DependentUpon>ReadHoldingRegisterWriteDialog.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Views\TestView.xaml.cs">
       <DependentUpon>TestView.xaml</DependentUpon>
     </Compile>
@@ -99,7 +101,15 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\ModbusSingleWriteDialog.xaml">
+    <Page Include="Views\Modbus\Write\ModbusBooleanWriteDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Modbus\Write\ModbusInt32WriteDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Modbus\Write\ModbusSingleWriteDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -157,14 +167,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Modbus\ModbusData\ModbusDataDialog.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\Modbus\Write\ReadCoilStatusWriteDialog.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\Modbus\Write\ReadHoldingRegisterWriteDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
