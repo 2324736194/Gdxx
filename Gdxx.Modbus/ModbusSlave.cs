@@ -56,7 +56,7 @@ namespace Gdxx.Modbus
         /// <param name="index">数据索引，索引从 1 开始</param>
         /// <param name="value"></param>
         /// <param name="format"></param>
-        public void WriteHoldingRegisters(int index, float value,ModbusSingleFormat format = ModbusSingleFormat.ABCD)
+        public void WriteHoldingRegisters(int index, float value,ModbusSingleFormat format = ModbusSingleFormat.CDAB)
         {
             var registers = new short[2];
             registers[0] = holdingRegisters[index];
